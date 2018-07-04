@@ -334,8 +334,13 @@ namespace System
         {
             if ((object)uriString == null)
                 throw new ArgumentNullException(nameof(uriString));
+            if (string.IsEmpty(uriString))
+                throw new ArgumentException(nameof(uriString));
 
-            CreateThis(uriString, false, UriKind.Absolute);
+            // The detection of UriKind isn't perfect as "Foo" will still be treated
+            // as an absolute URL, but there's no way to definitively determine if it
+            // should be relative or absolute in that case.
+            CreateThis(uriString, false, uriString[0] == '/' || uriString[0] == '.' ? UriKind.Relative : UriKind.Absolute);
         }
 
         //
